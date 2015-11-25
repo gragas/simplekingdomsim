@@ -1,3 +1,17 @@
+# Author: Thomas Fischer
+# GitHub: gragas
+
+# This file contains one class: Profile.
+# Profile represents a user's profile.
+# It stores information about the user,
+# like the user's name, level, and various
+# other attributes.
+# Profiles can be saved and loaded. All
+# profiles are saved in the folder
+# profiles/ under the name of the profile.
+# For example, the relative path of my
+# profile would be profiles/tom.
+
 import os
 import sys
 import datetime
