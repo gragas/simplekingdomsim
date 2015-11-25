@@ -11,8 +11,9 @@ import menu
 import profile_creation
 
 class Profile_Selection(Scene):
-    def __init__(self):
+    def __init__(self, profile=None):
         Scene.__init__(self)
+        self.passed_profile = profile
         self.BACKGROUND_COLOR = (0, 0, 50, 255)
         Button.DEFAULT_FONT = "default18"
         Label.DEFAULT_FONT = "default24"
@@ -54,6 +55,19 @@ class Profile_Selection(Scene):
             )
         )
 
+        if self.passed_profile is not None:
+            self.buttons.add(
+                Button(
+                    (10, utils.SCREEN_H - 10),
+                    "Back",
+                    func=self.go_back,
+                    invert_y_pos=True,
+                )
+            )
+
+    def go_back(self):
+        utils.set_scene(menu.Menu(profile=self.passed_profile))
+
     def update(self):
         pass
 
@@ -63,6 +77,8 @@ class Profile_Selection(Scene):
             (utils.SCREEN_M[0] - int(728 / 2), utils.SCREEN_M[1] - 70),
         )
 
-
     def on_escape(self):
-        sys.exit()
+        if self.passed_profile is not None:
+            self.go_back()
+        else:
+            sys.exit()

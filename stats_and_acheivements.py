@@ -10,7 +10,8 @@ import menu
 class Stats_And_Acheivements(Scene):
     def __init__(self, profile=None):
         Scene.__init__(self)
-        if profile is None:
+        self.passed_profile = profile
+        if self.passed_profile is None:
             print("You must specify a profile to display the stats " + \
                   "and acheivements of.")
             sys.exit()
@@ -18,17 +19,15 @@ class Stats_And_Acheivements(Scene):
         Button.DEFAULT_FONT = "default18"
         Label.DEFAULT_FONT = "default18"
 
-        def go_to_main_menu():
-            utils.set_scene(menu.Menu(profile=profile))
-
         self.buttons.add(
             Button(
                 (10, utils.SCREEN_H - 10),
                 "Back",
-                func=go_to_main_menu,
+                func=self.go_to_main_menu,
                 invert_y_pos=True,
             )
         )
+
         attrs = [attr for attr in dir(profile) if not attr.startswith("__")]
         # Get all non-builtin attributes
         attrs = filter(lambda x: not "__call__" in dir(getattr(profile, x)), attrs)
@@ -51,6 +50,9 @@ class Stats_And_Acheivements(Scene):
             string = attr.replace("_", " ").title() + ": " + value
             self.labels.add(Label((10, 10 + indx * 25),string,))
 
+    def go_to_main_menu(self):
+        utils.set_scene(menu.Menu(profile=self.passed_profile))
+
     def update(self):
         pass
 
@@ -58,4 +60,4 @@ class Stats_And_Acheivements(Scene):
         pass
 
     def on_escape(self):
-        sys.exit()
+        self.go_to_main_menu()

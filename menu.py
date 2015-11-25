@@ -66,7 +66,7 @@ class Menu(Scene):
         )
         
         def go_to_profile_selection():
-            utils.set_scene(profile_selection.Profile_Selection())
+            utils.set_scene(profile_selection.Profile_Selection(self.profile))
 
         self.buttons.add(
             Button(
