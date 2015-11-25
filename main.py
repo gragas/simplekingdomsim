@@ -1,7 +1,10 @@
+import os
 import sys
 import pygame
 from buffalo import utils
 import menu
+import profile_creation
+import profile_selection
 
 def main():
     while not utils.end:
@@ -16,6 +19,15 @@ if __name__ == "__main__":
         pygame.quit()
         sys.exit()
 
-    utils.set_scene(menu.Menu())
+    profiles = next(os.walk("profiles"))[2]
+    if len(profiles) == 0:
+        # Go to the profile creation Scene
+        utils.set_scene(profile_creation.Profile_Creation())
+    elif len(profiles) == 1:
+        # Load the only profile and go straight to the main menu
+        utils.set_scene(menu.Menu(profiles[0], load=True))
+    elif len(profiles) > 1:
+        # Go to the profile selection Scene
+        utils.set_scene(profile_selection.Profile_Selection())
     main()
     pygame.quit()

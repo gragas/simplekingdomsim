@@ -1,32 +1,91 @@
+import os
 import sys
+import pygame
 from buffalo import utils
 from buffalo.button import Button
 from buffalo.label import Label
 from buffalo.scene import Scene
+import _profile
+import stats_and_acheivements
+import profile_selection
 
 class Menu(Scene):
-    def __init__(self):
+    def __init__(self, profile_name=None, load=False, profile=None):
         Scene.__init__(self)
+        if profile_name is None and profile is None:
+            print("ERROR: You must specify a profile to play the game.")
+            sys.exit()
+        if profile is None:
+            self.profile = _profile.Profile(name=profile_name, load_from_file=load)
+        else:
+            self.profile = profile
+        self.profile.save()
         self.BACKGROUND_COLOR = (0, 0, 50, 255)
         Button.DEFAULT_FONT = "default18"
         Label.DEFAULT_FONT = "default48"
-        self.labels.add(
-            Label(
-                (utils.SCREEN_M[0], utils.SCREEN_M[1] - 70),
-                "SIMPLE KINGDOM SIM",
-                x_centered=True,
-            )
-        )
+        self.menu_logo = pygame.image.load(os.path.join("assets", "menu_logo.png"))
         self.buttons.add(
             Button(
-                (utils.SCREEN_M[0], utils.SCREEN_M[1] + 150),
+                (utils.SCREEN_M[0] - 10, utils.SCREEN_M[1] + 70),
                 "New Game",
+                invert_x_pos=True,
+            )
+        )
+
+        def go_to_stats_and_acheivements():
+            utils.set_scene(
+                stats_and_acheivements.Stats_And_Acheivements(self.profile)
+            )
+
+        self.buttons.add(
+            Button(
+                (utils.SCREEN_M[0], utils.SCREEN_M[1] + 210),
+                "Stats and Acheivements",
+                x_centered=True,
+                func=go_to_stats_and_acheivements,
+            )
+        )
+        self.buttons.add(
+            Button(
+                (utils.SCREEN_M[0] + 10, utils.SCREEN_M[1] + 70),
+                "Load Game",
+            )
+        )
+        self.buttons.add(
+            Button(
+                (utils.SCREEN_M[0] - 10, utils.SCREEN_M[1] + 140),
+                "New Campaign",
+                invert_x_pos=True,
+            )
+        )
+        self.buttons.add(
+            Button(
+                (utils.SCREEN_M[0] + 10, utils.SCREEN_M[1] + 140),
+                "Load Campaign",
+            )
+        )
+        
+        def go_to_profile_selection():
+            utils.set_scene(profile_selection.Profile_Selection())
+
+        self.buttons.add(
+            Button(
+                (utils.SCREEN_M[0], utils.SCREEN_M[1] + 280),
+                "Select Profile",
+                x_centered=True,
+                func=go_to_profile_selection,
+            )
+        )
+        self.buttons.add(
+            Button(
+                (utils.SCREEN_M[0], utils.SCREEN_M[1] + 350),
+                "Settings",
                 x_centered=True,
             )
         )
         self.buttons.add(
             Button(
-                (utils.SCREEN_M[0], utils.SCREEN_M[1] + 220),
+                (utils.SCREEN_M[0], utils.SCREEN_M[1] + 420),
                 "Exit",
                 x_centered=True,
                 func=sys.exit,
@@ -37,7 +96,10 @@ class Menu(Scene):
         pass
 
     def blit(self):
-        pass
+        utils.screen.blit(
+            self.menu_logo,
+            (utils.SCREEN_M[0] - int(728 / 2), utils.SCREEN_M[1] - 70),
+        )
 
     def on_escape(self):
         sys.exit()
