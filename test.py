@@ -3,6 +3,7 @@ import sys
 import subprocess
 
 def main():
+    print()
     test_folders = set()
     args = sys.argv
     if len(args) > 1:
@@ -12,6 +13,7 @@ def main():
         test_folders = [os.path.join("tests", folder) for folder in test_folders]
         test_folders = set(test_folders)
     for folder in test_folders:
+        print("{} tests...\n{}".format(folder, "="*20))
         tests = set([os.path.join(folder, fn) for fn in next(os.walk(folder))[2]])
         for test in tests:
             subprocess.call(["python3", test,])
