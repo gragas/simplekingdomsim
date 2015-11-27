@@ -6,6 +6,7 @@ from buffalo.input import Input
 from buffalo.label import Label
 from buffalo.scene import Scene
 import menu
+import _map
 
 class Stats_And_Acheivements(Scene):
     def __init__(self, profile=None):
@@ -18,7 +19,10 @@ class Stats_And_Acheivements(Scene):
         self.BACKGROUND_COLOR = (0, 0, 50, 255)
         Button.DEFAULT_FONT = "default18"
         Label.DEFAULT_FONT = "default18"
-
+        map_width = int(utils.SCREEN_W / _map.Map.TILE_SIZE) + 1
+        map_height = int(utils.SCREEN_H / _map.Map.TILE_SIZE) + 1
+        map_size = map_width, map_height
+        self.m = _map.Map(size=map_size)
         self.buttons.add(
             Button(
                 (10, utils.SCREEN_H - 10),
@@ -57,7 +61,7 @@ class Stats_And_Acheivements(Scene):
         pass
 
     def blit(self):
-        pass
+        self.m.blit(utils.screen)
 
     def on_escape(self):
         self.go_to_main_menu()

@@ -7,6 +7,7 @@ from buffalo.input import Input
 from buffalo.label import Label
 from buffalo.scene import Scene
 import menu
+import _map
 
 class Profile_Creation(Scene):
     def __init__(self):
@@ -15,7 +16,12 @@ class Profile_Creation(Scene):
         Button.DEFAULT_FONT = "default18"
         Label.DEFAULT_FONT = "default24"
         Input.DEFAULT_FONT = "default24"
-        self.menu_logo = pygame.image.load(os.path.join("assets", "menu_logo.png"))
+        self.menu_logo = pygame.image.load(
+            os.path.join("assets", "menu_logo_soft_shadow.png"))
+        map_width = int(utils.SCREEN_W / _map.Map.TILE_SIZE) + 1
+        map_height = int(utils.SCREEN_H / _map.Map.TILE_SIZE) + 1
+        map_size = map_width, map_height
+        self.m = _map.Map(size=map_size)
         self.labels.add(
             Label(
                 (utils.SCREEN_M[0], utils.SCREEN_M[1] + 70),
@@ -51,6 +57,7 @@ class Profile_Creation(Scene):
         pass
 
     def blit(self):
+        self.m.blit(utils.screen)
         utils.screen.blit(
             self.menu_logo,
             (utils.SCREEN_M[0] - int(728 / 2), utils.SCREEN_M[1] - 70),
