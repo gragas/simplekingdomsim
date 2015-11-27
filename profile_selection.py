@@ -19,6 +19,7 @@ class Profile_Selection(Scene):
         Button.DEFAULT_FONT = "default18"
         Label.DEFAULT_FONT = "default24"
         Input.DEFAULT_FONT = "default24"
+        Option.DEFAULT_FONT = "default24"
         self.menu_logo = pygame.image.load(
             os.path.join("assets", "menu_logo_soft_shadow.png"))
         map_width = int(utils.SCREEN_W / _map.Map.TILE_SIZE) + 1

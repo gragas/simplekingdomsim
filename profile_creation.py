@@ -63,6 +63,5 @@ class Profile_Creation(Scene):
             (utils.SCREEN_M[0] - int(728 / 2), utils.SCREEN_M[1] - 70),
         )
 
-
     def on_escape(self):
         sys.exit()

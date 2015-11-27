@@ -9,6 +9,7 @@ import _profile
 import stats_and_acheivements
 import profile_selection
 import _map
+import new_game
 
 class Menu(Scene):
     def __init__(self, profile_name=None, load=False, profile=None):
@@ -30,11 +31,16 @@ class Menu(Scene):
         map_height = int(utils.SCREEN_H / _map.Map.TILE_SIZE) + 1
         map_size = map_width, map_height
         self.m = _map.Map(size=map_size)
+
+        def go_to_new_game():
+            utils.set_scene(new_game.New_Game(self.profile))
+
         self.buttons.add(
             Button(
                 (utils.SCREEN_M[0] - 10, utils.SCREEN_M[1] + 70),
                 "New Game",
                 invert_x_pos=True,
+                func=go_to_new_game,
             )
         )
 
