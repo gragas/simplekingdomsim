@@ -10,15 +10,15 @@ class Map:
     TILE_SIZE = 32
 
     def __init__(self, size=(60, 34),
-                 i_temp=70, max_d_temp=5, off_d_temp=0,
-                 i_hum=30, max_d_hum=5, off_d_hum=0,
-                 i_alt=100, max_d_alt=5, off_d_alt=0,):
+                 i_temp=None, max_d_temp=5, off_d_temp=0,
+                 i_hum=None, max_d_hum=5, off_d_hum=0,
+                 i_alt=None, max_d_alt=5, off_d_alt=0,):
         # size is a 2-tuple representing the width
         # and height of the map in tiles
         self.size = self.width, self.height = size
         # i_* is the initial value of attribute *
         # max_d_* is the maximum delta of attribute *
-        self.i_temp = i_temp
+        self.i_temp = i_temp if i_temp is not None else random.randint(50, 90)
         self.max_d_temp = max_d_temp
         self.off_d_temp = off_d_temp
         self.temp_arr = functools.reduce(
@@ -26,7 +26,7 @@ class Map:
             [[i + self.off_d_temp]*(self.max_d_temp - i) for i in range(self.max_d_temp)]
         ) # e.g., [0, 0, 0, 0, 1, 1, 1, 2, 2, 3]
         self.temp_arr = self.temp_arr + [-i for i in self.temp_arr]
-        self.i_hum = i_hum
+        self.i_hum = i_hum if i_hum is not None else random.randint(10, 50)
         self.max_d_hum = max_d_hum
         self.off_d_hum = off_d_hum
         self.hum_arr = functools.reduce(
@@ -34,7 +34,7 @@ class Map:
             [[i + self.off_d_hum]*(self.max_d_hum - i) for i in range(self.max_d_hum)]
         ) # e.g., [0, 0, 0, 0, 1, 1, 1, 2, 2, 3]
         self.hum_arr = self.hum_arr + [-i for i in self.hum_arr]
-        self.i_alt = i_alt
+        self.i_alt = i_alt if i_alt is not None else random.randint(0, 200)
         self.max_d_alt = max_d_alt
         self.off_d_alt = off_d_alt
         self.alt_arr = functools.reduce(
@@ -82,6 +82,14 @@ class Map:
                 if g < 0: g = 0
                 if b > 255: b = 255
                 if b < 0: b = 0
+                if r < 200 and g < 200:
+                    r = int(0.15 * r)
+                    g = int(0.15 * g)
+                    b = min((255, int(1.0125 * b)))
+                else:
+                    r = int(0.95 * r)
+                    g = int(0.85 * g)
+                    b = int(0.75 * b)
                 color = (r, g, b, 255)
                 self.surface.fill(
                     color,
