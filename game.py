@@ -1,7 +1,10 @@
 import sys
 import pygame
 from buffalo import utils
+from buffalo.button import Button
+from buffalo.label import Label
 from buffalo.scene import Scene
+from buffalo.tray import Tray
 import _map
 
 class _Helper:
@@ -34,6 +37,42 @@ class _Helper:
         x += _Helper.xv
         y += _Helper.yv
         _Helper.fPos = x, y
+
+class EscapeMenu(Tray):
+    def __init__(self):
+        w, h = 300, 150
+        x = int((utils.SCREEN_W - w) / 2)
+        y = int((utils.SCREEN_H - h) / 2)
+        Tray.__init__(
+            self, (x, y), (w, h),
+            min_width=w, max_width=w,
+            min_height=h, max_height=h,
+        )
+        self.labels.add(Label((int(w / 2), 10), "Escape Menu", x_centered=True))
+        self.labels.add(Label((int(w / 2), 20), "_"*30, x_centered=True))
+        exit_game_button = Button(
+            (w - 20, h - 20),
+            "Exit Game",
+            invert_x_pos=True,
+            invert_y_pos=True,
+            func=sys.exit,
+        )
+        self.buttons.add(exit_game_button)
+        save_game_button = Button(
+            (20, h - 20),
+            "Save Game",
+            invert_y_pos=True,
+        )
+        self.buttons.add(save_game_button)
+        self.toggled = False
+        self.render()
+
+    def toggle(self):
+        self.toggled = not self.toggled
+
+    def blit(self, dest):
+        if self.toggled:
+            Tray.blit(self, dest)
 
 class Game(Scene):
     def __init__(self,
@@ -145,13 +184,16 @@ class Game(Scene):
                           i_alt=None, max_d_alt=mda, off_d_alt=oda,
         )
         _Helper.initialize()
+        self.escape_menu = EscapeMenu()
+        self.trays.add(self.escape_menu)
 
     def blit(self):
         x, y = _Helper.pos()
         self.m.blit(utils.screen, pos=(-x, -y))
 
     def update(self):
+        super(Game, self).update()
         _Helper.update()
 
     def on_escape(self):
-        sys.exit()
+        self.escape_menu.toggle()
