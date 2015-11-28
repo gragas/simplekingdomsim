@@ -170,6 +170,8 @@ class New_Game(Scene):
         )
 
     def go_to_in_game(self):
+        self.passed_profile.games_started += 1
+        self.passed_profile.save()
         utils.set_scene(
             game.Game(
                 profile=self.passed_profile,
