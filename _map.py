@@ -4,6 +4,7 @@ import sys
 import pygame
 from buffalo import utils
 from buffalo.scene import Scene
+import wood, stone
 
 class Map:
 
@@ -12,7 +13,8 @@ class Map:
     def __init__(self, size=(60, 34),
                  i_temp=None, max_d_temp=5, off_d_temp=0,
                  i_hum=None, max_d_hum=5, off_d_hum=0,
-                 i_alt=None, max_d_alt=5, off_d_alt=0,):
+                 i_alt=None, max_d_alt=5, off_d_alt=0,
+                 wood_density=10, stone_density=0.25):
         # size is a 2-tuple representing the width
         # and height of the map in tiles
         self.size = self.width, self.height = size
@@ -44,6 +46,9 @@ class Map:
         self.alt_arr = self.alt_arr + [-i for i in self.alt_arr]
         self.tiles = dict()
         self.surface = utils.empty_surface((self.width * Map.TILE_SIZE, self.height * Map.TILE_SIZE))
+        self.wood_density = wood_density
+        self.stone_density = stone_density
+        self.water_tiles = set()
         self.generate_map()
         self.render()
 
@@ -67,6 +72,32 @@ class Map:
                                alt + random.choice(self.alt_arr),
                            )
                 edge_tiles.remove((x, y))
+        self.resources = set()
+        self.render()
+        total_tiles = self.width * self.height
+        self.stone_tiles = set()
+        total_stone = int(total_tiles * self.stone_density / 100)
+        for _ in range(total_stone):
+            self.resources.add(
+                stone.Stone(
+                    bounds=(
+                        self.width * Map.TILE_SIZE,
+                        self.height * Map.TILE_SIZE
+                    ),
+                    _map_=self,
+                )
+            )
+        total_wood = int(total_tiles * self.wood_density / 100)
+        for _ in range(total_wood):
+            self.resources.add(
+                wood.Wood(
+                    bounds=(
+                        self.width * Map.TILE_SIZE,
+                        self.height * Map.TILE_SIZE
+                    ),
+                    _map_=self,
+                )
+            )
 
     def render(self):
         for y in range(self.height):
@@ -86,6 +117,7 @@ class Map:
                     r = int(0.15 * r)
                     g = int(0.15 * g)
                     b = min((255, int(1.0125 * b)))
+                    self.water_tiles.add((x, y))
                 else:
                     r = int(0.95 * r)
                     g = int(0.85 * g)
@@ -98,6 +130,8 @@ class Map:
                         Map.TILE_SIZE, Map.TILE_SIZE
                     )
                 )
+        for resource in self.resources:
+            resource.blit(self.surface)
 
     def blit(self, dest, pos=(0, 0)):
         dest.blit(self.surface, pos)
@@ -127,6 +161,14 @@ class Map:
         hum_str = "Humdities:\n" + "\n".join(hum_str)
         alt_str = "Altitudes:\n" + "\n".join(alt_str)
         return "\n\n".join([temp_str, hum_str, alt_str])
+
+    def on_water(self, pos):
+        x, y = pos
+        return (int(x / Map.TILE_SIZE), int(y / Map.TILE_SIZE)) in self.water_tiles
+
+    def on_stone(self, pos):
+        x, y = pos
+        return (int(x / Map.TILE_SIZE), int(y / Map.TILE_SIZE)) in self.stone_tiles
 
 class _MainScene(Scene):
     # This class is only used when __name__ == "__main__"
